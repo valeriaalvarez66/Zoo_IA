@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>🔮 Predicción del Tipo de Animal</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="card">
+    <h1 class="titulo">🔮 Predicción del Tipo de Animal</h1>
+    <p class="sub">Ingresa las características del animal:</p>
+
+    <form id="predictForm" class="grid-form">
+
+        <div class="campo">
+            <label>🐶 Pelo (hair)</label>
+            <input type="number" id="hair" min="0" max="1">
+        </div>
+
+        <div class="campo">
+            <label>🪶 Plumas (feathers)</label>
+            <input type="number" id="feathers" min="0" max="1">
+        </div>
+
+        <div class="campo">
+            <label>🥚 Huevos (eggs)</label>
+            <input type="number" id="eggs" min="0" max="1">
+        </div>
+
+        <div class="campo">
+            <label>🍼 Leche (milk)</label>
+            <input type="number" id="milk" min="0" max="1">
+        </div>
+
+        <div class="campo">
+            <label>🌊 Acuático (aquatic)</label>
+            <input type="number" id="aquatic" min="0" max="1">
+        </div>
+
+        <div class="campo">
+            <label>🐾 Número de patas (legs)</label>
+            <input type="number" id="legs" min="0" max="8">
+        </div>
+
+        <div class="campo full">
+            <label>📏 Legs Scaled (legs_scaled)</label>
+            <input type="text" id="legs_scaled" placeholder="Ej: 0.57">
+        </div>
+
+        <button type="button" onclick="enviarDatos()" class="btn-full">✨ Predecir</button>
+    </form>
+
+    <div id="resultado" class="resultado"></div>
+</div>
+
+<script>
+    const tiposAnimales = {
+        1: {
+            nombre: "🐶 Mamífero",
+            img: "https://cdn-icons-png.flaticon.com/512/1998/1998782.png",
+            desc: "Los mamíferos tienen pelo y producen leche para alimentar a sus crías."
+        },
+        2: {
+            nombre: "🐦 Ave",
+            img: "https://cdn-icons-png.flaticon.com/512/616/616408.png",
+            desc: "Las aves tienen plumas, ponen huevos y muchas pueden volar."
+        },
+        3: {
+            nombre: "🦎 Reptil",
+            img: "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+            desc: "Los reptiles tienen escamas y son de sangre fría."
+        },
+        4: {
+            nombre: "🐟 Pez",
+            img: "https://cdn-icons-png.flaticon.com/512/2570/2570143.png",
+            desc: "Los peces viven en el agua, tienen aletas y branquias."
+        },
+        5: {
+            nombre: "🐸 Anfibio",
+            img: "https://cdn-icons-png.flaticon.com/512/415/415734.png",
+            desc: "Los anfibios viven en agua y tierra y pasan por metamorfosis."
+        },
+        6: {
+            nombre: "🐞 Insecto",
+            img: "https://cdn-icons-png.flaticon.com/512/619/619019.png",
+            desc: "Los insectos tienen seis patas y exoesqueleto."
+        },
+        7: {
+            nombre: "🦐 Invertebrado",
+            img: "https://cdn-icons-png.flaticon.com/512/616/616556.png",
+            desc: "Los invertebrados no tienen columna vertebral."
+        }
+    };
+
+    async function enviarDatos() {
+
+        const url = "http://127.0.0.1:5000/predict";
+
+        const datos = {
+            hair: parseInt(document.getElementById("hair").value),
+            feathers: parseInt(document.getElementById("feathers").value),
+            eggs: parseInt(document.getElementById("eggs").value),
+            milk: parseInt(document.getElementById("milk").value),
+            aquatic: parseInt(document.getElementById("aquatic").value),
+            legs: parseInt(document.getElementById("legs").value),
+            legs_scaled: parseFloat(document.getElementById("legs_scaled").value)
+        };
+
+        const respuesta = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuesta.json();
+        const tipo = resultado.prediccion;
+        const info = tiposAnimales[tipo];
+
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("resultado").innerHTML = `
+            <img src="${info.img}" class="animal-img">
+            <h2>${info.nombre}</h2>
+            <p>${info.desc}</p>
+        `;
+    }
+</script>
+
+</body>
+</html>
